@@ -1,9 +1,14 @@
 # main.py
 import argparse
-import sys
 import logging
+import sys
+
+from dotenv import load_dotenv
 
 from pipelines.boilerplate_pipeline import BoilerplatePipeline
+from src.pipelines.page_to_markdown_pipeline import PageToMarkdownPipeline
+
+load_dotenv()
 
 
 def setup_logging():
@@ -23,7 +28,8 @@ def main():
 
     # Instantiate the appropriate pipeline
     pipelines = {
-        "boilerplate": BoilerplatePipeline(),
+        "boilerplate": BoilerplatePipeline(known_args.project_name),
+        "page_to_markdown": PageToMarkdownPipeline(known_args.project_name),
     }
 
     pipeline = pipelines.get(known_args.pipeline_name)

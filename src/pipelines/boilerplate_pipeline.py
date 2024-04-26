@@ -1,12 +1,13 @@
 import logging
-from src.pipelines.base_pipeline import BasePipeline
+
 from src.nodes.boilerplate_node import BoilerplateNode
+from src.pipelines.base_pipeline import BasePipeline
 
 
 class BoilerplatePipeline(BasePipeline):
-    def __init__(self):
+    def __init__(self, project_name):
         self.logger = logging.getLogger(__name__)
-        self.boilerplate_node = BoilerplateNode()
+        self.boilerplate_node = BoilerplateNode(project_name)  # Pass project_name to the node
 
     def add_arguments(self, parser):
         parser.add_argument("--url", type=str, required=True, help="URL")
