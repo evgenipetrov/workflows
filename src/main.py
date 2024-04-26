@@ -1,3 +1,4 @@
+# main.py
 import argparse
 import sys
 import logging
@@ -6,7 +7,8 @@ from pipelines.boilerplate_pipeline import BoilerplatePipeline
 
 
 def setup_logging():
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    # Configure the logging level and format
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(name)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 
 
 def main():
@@ -17,7 +19,7 @@ def main():
     parser.add_argument("--pipeline_name", type=str, required=True, help="Name of the pipeline")
 
     # Temporary parse to get pipeline name
-    known_args, remaining_argv = parser.parse_known_args(sys.argv[1:3])
+    known_args, remaining_argv = parser.parse_known_args()
 
     # Instantiate the appropriate pipeline
     pipelines = {
