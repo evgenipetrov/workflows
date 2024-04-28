@@ -1,46 +1,35 @@
-# main.py
 import argparse
 import logging
 import sys
 
 from dotenv import load_dotenv
 
-from pipelines.boilerplate_pipeline import BoilerplatePipeline
-from src.pipelines.page_to_markdown_pipeline import PageToMarkdownPipeline
+from src.operators.logging_operator import LoggingOperator
+from src.operators.pipeline_operator import PipelineOperator
 
 load_dotenv()
 
 
-def setup_logging():
-    # Configure the logging level and format
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(name)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
-
-
 def main():
-    setup_logging()
+    LoggingOperator.setup_logging()
 
     parser = argparse.ArgumentParser(description="Run a specified pipeline on a project with dynamic parameters.")
     parser.add_argument("--project_name", type=str, required=True, help="Name of the project")
     parser.add_argument("--pipeline_name", type=str, required=True, help="Name of the pipeline")
 
-    # Temporary parse to get pipeline name
-    known_args, remaining_argv = parser.parse_known_args()
+    # Parse arguments early to get the pipeline name
+    args, remaining_argv = parser.parse_known_args()
 
-    # Instantiate the appropriate pipeline
-    pipelines = {
-        "boilerplate": BoilerplatePipeline(known_args.project_name),
-        "page_to_markdown": PageToMarkdownPipeline(known_args.project_name),
-    }
-
-    pipeline = pipelines.get(known_args.pipeline_name)
+    # Create pipeline using the factory
+    pipeline = PipelineOperator.create(args.pipeline_name, args.project_name)
     if not pipeline:
-        logging.error(f"Invalid pipeline name provided: {known_args.pipeline_name}")
+        logging.error(f"Invalid pipeline name provided: {args.pipeline_name}")
         sys.exit(1)
 
-    # Let the pipeline define its specific arguments
+    # Allow the pipeline to add its specific arguments
     pipeline.add_arguments(parser)
 
-    # Parse all arguments again with new context
+    # Re-parse args with new context
     args = parser.parse_args()
 
     # Execute the pipeline
