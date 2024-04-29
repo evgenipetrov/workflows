@@ -14,7 +14,7 @@ class BrowserNode(BaseNode):
 
     def __init__(self, project_name):
         super().__init__(project_name)
-        self.logger = logging.getLogger(__name__)
+        self._logger = logging.getLogger(__name__)
 
     def _load_data(self, urls):
         """Ensure the URLs are always handled as a list."""
@@ -22,30 +22,41 @@ class BrowserNode(BaseNode):
             urls = [urls]  # Convert it to a list
         return urls
 
-    def _process(self, data_list, output_folder):
-        """Fetch HTML content for each URL and store in the output folder."""
-        for url in data_list:
+    def _process(self, output_folder):
+        """Fetch HTML content for each URL and store in self._processing_data."""
+        processed_data = []
+        for url in self._processing_data:
             try:
-                self.logger.info(f"Fetching HTML content from URL: {url}")
+                self._logger.info(f"Fetching HTML content from URL: {url}")
                 response = requests.get(url)
                 response.raise_for_status()
 
                 # Generate a normalized filename from the URL
                 filename = f"{UrlOperator.normalize_url(url)}.html"
-                output_path = os.path.join(output_folder, filename)
-
-                with open(output_path, "w", encoding="utf-8") as file:
-                    file.write(response.text)
-                self.logger.info(f"Successfully fetched and stored HTML content from URL: {url} in {filename}")
+                processed_data.append((filename, response.text))
+                self._logger.info(f"Successfully fetched HTML content from URL: {url}")
             except requests.RequestException as e:
-                self.logger.error(f"Failed to fetch HTML content from URL: {url}. Error: {e}")
+                self._logger.error(f"Failed to fetch HTML content from URL: {url}. Error: {e}")
+
+        self._processing_data = processed_data
+
+    def _save_data(self, output_folder):
+        """Save the processed HTML data to files in the specified output folder."""
+        for filename, html_content in self._processing_data:
+            output_path = os.path.join(output_folder, filename)
+            with open(output_path, "w", encoding="utf-8") as file:
+                file.write(html_content)
+            self._logger.info(f"HTML content successfully written to {output_path}")
 
     def execute(self, urls, **kwargs):
         # Ensure urls are processed as a list
         urls = self._load_data(urls)  # This adjusts single url to a list if necessary
-        output_folder, is_cache_valid = self.cache_manager.get_or_create_output_folder(**kwargs)
+        self._input_data = urls
+        self._processing_data = self._input_data.copy()
+        output_folder, is_cache_valid = self._cache_manager.get_or_create_output_folder(**kwargs)
         if not is_cache_valid:
-            self._process(urls, output_folder)
+            self._process(output_folder)
+            self._save_data(output_folder)
         return output_folder
 
     def _get_cache_duration(self):

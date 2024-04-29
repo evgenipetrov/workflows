@@ -1,12 +1,10 @@
-from src.pipelines.boilerplate_pipeline import BoilerplatePipeline
 from src.pipelines.page_to_markdown_pipeline import PageToMarkdownPipeline
 
 
 class PipelineOperator:
     # factory class to create pipelines
     pipelines = {
-        "boilerplate": BoilerplatePipeline,
-        "page_to_markdown": PageToMarkdownPipeline,
+        "test": PageToMarkdownPipeline,
     }
 
     @staticmethod
