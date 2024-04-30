@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from markdownify import markdownify as md
 
-from src.nodes.base_node import BaseNode
+from nodes.base_node import BaseNode
 
 
 class MarkdownParserNode(BaseNode):

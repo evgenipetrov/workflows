@@ -1,6 +1,6 @@
-from src.nodes.browser_node import BrowserNode
-from src.nodes.markdown_parser_node import MarkdownParserNode
-from src.pipelines.base_pipeline import BasePipeline
+from nodes.browser_node import BrowserNode
+from nodes.markdown_parser_node import MarkdownParserNode
+from pipelines.base_pipeline import BasePipeline
 
 
 class PageToMarkdownPipeline(BasePipeline):

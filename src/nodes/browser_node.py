@@ -4,8 +4,8 @@ from datetime import timedelta
 
 import requests
 
-from src.nodes.base_node import BaseNode
-from src.operators.url_operator import UrlOperator
+from nodes.base_node import BaseNode
+from operators.url_operator import UrlOperator
 
 
 class BrowserNode(BaseNode):

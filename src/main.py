@@ -4,8 +4,8 @@ import sys
 
 from dotenv import load_dotenv
 
-from src.operators.logging_operator import LoggingOperator
-from src.operators.pipeline_operator import PipelineOperator
+from operators.logging_operator import LoggingOperator
+from operators.pipeline_operator import PipelineOperator
 
 load_dotenv()
 

@@ -1,4 +1,4 @@
-from src.pipelines.page_to_markdown_pipeline import PageToMarkdownPipeline
+from pipelines.page_to_markdown_pipeline import PageToMarkdownPipeline
 
 
 class PipelineOperator:

@@ -2,7 +2,7 @@ import os
 from abc import ABC, abstractmethod
 from datetime import timedelta
 
-from src.operators.cache_operator import CacheOperator
+from operators.cache_operator import CacheOperator
 
 
 class BaseNode(ABC):
