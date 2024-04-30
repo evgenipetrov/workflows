@@ -25,9 +25,11 @@ class MarkdownParserNode(BaseNode):
         self._processing_data = []
         for file_path, html_content in self._input_data:
             markdown_content = self._convert_to_markdown(html_content)
-            self._processing_data.append((file_path, markdown_content))
+            data_item = file_path, markdown_content
+            self._processing_data.append(data_item)
 
-    def _convert_to_markdown(self, html_content):
+    @staticmethod
+    def _convert_to_markdown(html_content):
         """Convert HTML to Markdown."""
         markdown = md(html_content)
         cleaned_markdown = "\n".join(line for line in markdown.splitlines() if line.strip())

@@ -1,6 +1,7 @@
 import os
 from abc import ABC, abstractmethod
 from datetime import timedelta
+from typing import Any, List
 
 from operators.cache_operator import CacheOperator
 
@@ -10,8 +11,8 @@ class BaseNode(ABC):
         self._project_name = project_name
         self._input_folder = None if input_folder is None else os.path.join(project_name, input_folder)
         self._cache_manager = CacheOperator(project_name, self.__class__.__name__, self._get_cache_duration())
-        self._input_data = None
-        self._processing_data = None
+        self._input_data: List[Any] = []
+        self._processing_data: List[Any] = []
 
     def execute(self, **kwargs):
         output_folder, is_cache_valid = self._cache_manager.get_or_create_output_folder(**kwargs)
@@ -23,8 +24,8 @@ class BaseNode(ABC):
         return output_folder
 
     @abstractmethod
-    def _load_data(self):
-        """Load data from the input folder; must return a list."""
+    def _load_data(self, **kwargs):
+        """Load data; must return a list."""
         pass
 
     @abstractmethod

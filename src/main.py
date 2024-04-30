@@ -29,7 +29,7 @@ def main():
     # Allow the pipeline to add its specific arguments
     pipeline.add_arguments(parser)
 
-    # Re-parse args with new context
+    # Reparse args with new context
     args = parser.parse_args()
 
     # Execute the pipeline

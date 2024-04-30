@@ -6,7 +6,7 @@ from datetime import datetime
 
 class CacheOperator:
     def __init__(self, project_name, node_folder_name, cache_duration):
-        self.root_path = os.getenv("DATA_ROOT_PATH", "data")
+        self.root_path = os.getenv("PROJECT_DATA_ROOT_PATH", "data")
         self.base_path = os.path.join(self.root_path, project_name, node_folder_name)
         self.cache_duration = cache_duration
         if not os.path.exists(self.base_path):

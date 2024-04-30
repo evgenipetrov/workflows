@@ -1,3 +1,5 @@
 .idea/
 data/
+project_data/
+user_data/
 .env
