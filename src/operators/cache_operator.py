@@ -1,4 +1,5 @@
 import hashlib
+import json
 import logging
 import os
 from datetime import datetime
@@ -14,8 +15,8 @@ class CacheOperator:
         self.logger = logging.getLogger(__name__)
 
     def get_or_create_output_folder(self, **kwargs):
-        # Create a hash of the kwargs to form a unique directory name
-        hash_input = str(kwargs).encode("utf-8")
+        # Create a hash of the kwargs using a consistent, sorted order
+        hash_input = json.dumps(kwargs, sort_keys=True).encode("utf-8")
         hash_output = hashlib.md5(hash_input).hexdigest()
         output_folder = os.path.join(self.base_path, hash_output)
 

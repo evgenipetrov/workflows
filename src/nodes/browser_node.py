@@ -71,6 +71,10 @@ class BrowserNode(BaseNode):
             self._logger.info(f"HTML content successfully written to {output_path}")
 
     def execute(self, urls, execute_js=False, **kwargs):
+        # Integrate urls and execute_js into kwargs for unique hashing
+        kwargs["urls"] = urls
+        kwargs["execute_js"] = execute_js
+
         self._load_data(urls)
         output_folder, is_cache_valid = self._cache_manager.get_or_create_output_folder(**kwargs)
         if not is_cache_valid:

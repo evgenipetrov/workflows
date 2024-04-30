@@ -45,6 +45,8 @@ class MarkdownParserNode(BaseNode):
             self._logger.info(f"Markdown content successfully written to {output_path}")
 
     def execute(self, input_folder, **kwargs):
+        # Integrate input_folder into kwargs to pass to cache manager
+        kwargs["input_folder"] = input_folder
         """Processes HTML files in the given input folder into Markdown files."""
         self._input_data = self._load_data(input_folder)
         self._processing_data = self._input_data.copy()
