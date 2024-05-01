@@ -11,9 +11,10 @@ class PageToMarkdownPipeline(BasePipeline):
         self.markdown_parser_node = MarkdownParserNode(project_name)
 
     def add_arguments(self, parser):
-        parser.add_argument("--url", type=str, required=True, help="URL for fetching HTML")
+        parser.add_argument("--input_data_dir", type=str, required=True, help="URL for fetching HTML")
 
     def execute(self, args):
-        html_dir = self.browser_node.execute(args.url, execute_js=True)
+        product_urls_dir = r"D:\Projects\workflows\project_data\_amazon_products"
+        html_dir = self.browser_node.execute(args.input_data_dir, execute_js=True)
         markdown_content = self.markdown_parser_node.execute(html_dir)  # Directly pass HTML content
         return markdown_content
