@@ -3,3 +3,4 @@ requests
 undetected-chromedriver
 markdownify
 pandas
+openai

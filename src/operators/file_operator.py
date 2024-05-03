@@ -1,10 +1,11 @@
 import logging
 import os
+from typing import List
 
 import pandas as pd
 
 
-class CsvOperator:
+class FileOperator:
     def __init__(self):
         self._logger = logging.getLogger(self.__class__.__name__)
 
@@ -59,3 +60,33 @@ class CsvOperator:
             return pd.concat(df_list, ignore_index=True)
         else:
             return pd.DataFrame()  # Return an empty DataFrame if no files were processed or if all reads failed
+
+    def read_all_txts_in_folder(self, folder_path: str) -> List[str]:
+        """
+        Reads all text files in the specified folder and returns their contents as a list of strings.
+        :param folder_path: Path to the folder containing text files.
+        :return: List of strings, where each string represents the content of a text file.
+        """
+        all_files = [os.path.join(folder_path, f) for f in os.listdir(folder_path)]
+        file_contents = []
+
+        for file in all_files:
+            try:
+                with open(file, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    file_contents.append(content)
+            except FileNotFoundError:
+                self._logger.error(f"File not found: {file}")
+            except UnicodeDecodeError as e:
+                self._logger.error(f"Error decoding the text file at {file}: {e}")
+                # Try reading the file with a different encoding
+                try:
+                    with open(file, "r", encoding="latin-1") as f:
+                        content = f.read()
+                        file_contents.append(content)
+                except Exception as e:
+                    self._logger.error(f"Error reading the text file at {file}: {e}")
+            except Exception as e:
+                self._logger.error(f"Error reading the text file at {file}: {e}")
+
+        return file_contents

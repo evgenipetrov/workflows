@@ -1,10 +1,12 @@
 from pipelines.page_to_markdown_pipeline import PageToMarkdownPipeline
+from pipelines.summarize_product_description_pipeline import SummarizeProductDescriptionPipeline
 
 
 class PipelineOperator:
     # factory class to create pipelines
     pipelines = {
-        "test": PageToMarkdownPipeline,
+        "test": SummarizeProductDescriptionPipeline,
+        "page_to_markdown": PageToMarkdownPipeline,
     }
 
     @staticmethod

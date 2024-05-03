@@ -7,7 +7,7 @@ import requests
 import undetected_chromedriver as uc
 
 from nodes.base_node import BaseNode
-from operators.csv_operator import CsvOperator
+from operators.file_operator import FileOperator
 from operators.url_operator import UrlOperator
 
 
@@ -18,10 +18,10 @@ class BrowserNode(BaseNode):
     def __init__(self, project_name: str):
         super().__init__(project_name)
         self._logger = logging.getLogger(__name__)
-        self.csv_operator = CsvOperator()
+        self.file_operator = FileOperator()
 
     def _load_data(self) -> None:
-        df = self.csv_operator.read_all_csvs_in_folder(self._input_folder)
+        df = self.file_operator.read_all_csvs_in_folder(self._input_folder)
 
         if not df.empty and "url" in df.columns:
             self._input_data = df["url"].tolist()
