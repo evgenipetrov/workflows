@@ -5,10 +5,13 @@ from datetime import timedelta
 
 import requests
 import undetected_chromedriver as uc
+from dotenv import load_dotenv
 
 from nodes.base_node import BaseNode
 from operators.file_operator import FileOperator
 from operators.url_operator import UrlOperator
+
+load_dotenv()
 
 
 class BrowserNode(BaseNode):
@@ -21,28 +24,29 @@ class BrowserNode(BaseNode):
         self.file_operator = FileOperator()
 
     def _load_data(self) -> None:
-        df = self.file_operator.read_all_csvs_in_folder(self._input_folder)
+        if self._input_path:
+            df = self.file_operator.read_all_csvs_in_folder(self._input_path)
+            if not df.empty and "url" in df.columns:
+                self._input_data = df["url"].tolist()
+            else:
+                self._logger.warning("No URLs found or 'url' column is missing in the CSV files.")
 
-        if not df.empty and "url" in df.columns:
-            self._input_data = df["url"].tolist()
-        else:
-            self._logger.warning("No URLs found or 'url' column is missing in the CSV files.")
-
-    def _process(self) -> None:
+    def _process_item(self, item: str) -> str:
         execute_js = self._kwargs.get("execute_js", False)
-        for url in self._input_data:
-            try:
-                html_content = self._use_selenium(url) if execute_js else self._use_requests(url)
-                filename = f"{UrlOperator.normalize_url(url)}.html"
-                self._output_data.append((filename, html_content))
-                self._logger.info(f"Successfully fetched HTML content from URL: {url}")
-            except Exception as e:
-                self._logger.error(f"Failed to fetch HTML content from URL: {url}. Error: {e}")
+        try:
+            html_content = self._use_selenium(item) if execute_js else self._use_requests(item)
+            self._logger.info(f"Successfully fetched HTML content from URL: {item}")
+            return html_content
+        except Exception as e:
+            self._logger.error(f"Failed to fetch HTML content from URL: {item}. Error: {e}")
+            return ""
 
     def _save_data(self) -> None:
-        self._logger.debug(f"Saving data to folder {self._output_folder}. Data to save: {self._output_data}")
-        for filename, html_content in self._output_data:
-            output_file_path = os.path.join(self._output_folder, filename)
+        self._logger.debug(f"Saving data to folder {self._output_path}. Data to save: {self._output_data}")
+        for index, html_content in enumerate(self._output_data):
+            url = self._input_data[index]
+            filename = f"{UrlOperator.normalize_url(url)}.html"
+            output_file_path = os.path.join(self._output_path, filename)
             with open(output_file_path, "w", encoding="utf-8", errors="replace") as file:
                 file.write(html_content)
             self._logger.info(f"HTML content successfully written to {output_file_path}")
@@ -57,7 +61,9 @@ class BrowserNode(BaseNode):
     def _use_selenium(url: str) -> str:
         browser_executable_path = os.getenv("CHROME_EXECUTABLE_PATH")
         user_data_dir = os.getenv("USER_DATA_ROOT_PATH")
-        driver = uc.Chrome(browser_executable_path=browser_executable_path, user_data_dir=user_data_dir, use_subprocess=True)
+        driver = uc.Chrome(
+            browser_executable_path=browser_executable_path, user_data_dir=user_data_dir, use_subprocess=True
+        )
         try:
             driver.get("about:blank")
             time.sleep(1)

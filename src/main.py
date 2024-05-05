@@ -15,15 +15,15 @@ def main():
 
     parser = argparse.ArgumentParser(description="Run a specified pipeline on a project with dynamic parameters.")
     parser.add_argument("--project_name", type=str, required=True, help="Name of the project")
-    parser.add_argument("--pipeline_name", type=str, required=True, help="Name of the pipeline")
+    parser.add_argument("--workflow_name", type=str, required=True, help="Name of the workflow")
 
     # Parse arguments early to get the pipeline name
     args, remaining_argv = parser.parse_known_args()
 
     # Create pipeline using the factory
-    pipeline = PipelineOperator.create(args.pipeline_name, args.project_name)
+    pipeline = PipelineOperator.create(args.workflow_name, args.project_name)
     if not pipeline:
-        logging.error(f"Invalid pipeline name provided: {args.pipeline_name}")
+        logging.error(f"Invalid workflow name provided: {args.workflow_name}")
         sys.exit(1)
 
     # Allow the pipeline to add its specific arguments

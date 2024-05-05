@@ -18,8 +18,8 @@ class MarkdownParserNode(BaseNode):
         self._file_operator = FileOperator()
 
     def _load_data(self) -> None:
-        self._logger.debug(f"Loading HTML files from directory: {self._input_folder}")
-        html_files = self._file_operator.read_all_txts_in_folder(self._input_folder)
+        self._logger.debug(f"Loading HTML files from directory: {self._input_path}")
+        html_files = self._file_operator.read_all_txts_in_folder(self._input_path)
         self._logger.debug(f"Found HTML files: {len(html_files)}")
         for html_content in html_files:
             self._input_data.append(html_content)
@@ -32,7 +32,7 @@ class MarkdownParserNode(BaseNode):
     def _save_data(self) -> None:
         for file_path, markdown_content in self._output_data:
             markdown_filename = os.path.splitext(os.path.basename(file_path))[0] + ".md"
-            output_file_path = os.path.join(self._output_folder, markdown_filename)
+            output_file_path = os.path.join(self._output_path, markdown_filename)
             with open(output_file_path, "w", encoding="utf-8") as file:
                 file.write(markdown_content)
             self._logger.info(f"Markdown content successfully written to {output_file_path}")

@@ -74,7 +74,9 @@ class OpenAINode(BaseNode):
             conversation_history.append({"role": "user", "content": full_prompt})
 
             # Make the API request to OpenAI
-            response = client.chat.completions.create(model=model, messages=conversation_history, temperature=temperature, max_tokens=max_tokens)
+            response = client.chat.completions.create(
+                model=model, messages=conversation_history, temperature=temperature, max_tokens=max_tokens
+            )
 
             # Extract the assistant's response from the API response
             assistant_response = response.choices[0].message.content
@@ -84,7 +86,7 @@ class OpenAINode(BaseNode):
 
     def _save_data(self) -> None:
         # Save the conversation history to a file in the output folder
-        output_file = os.path.join(self._output_folder, "conversation_history.txt")
+        output_file = os.path.join(self._output_path, "conversation_history.txt")
         with open(output_file, "w") as file:
             for response in self._output_data:
                 file.write(f"Assistant: {response}\n")
