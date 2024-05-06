@@ -1,4 +1,4 @@
-from pipelines.get_html_pipeline import GetHtmlPipeline
+from pipelines.test_pipeline import TestPipeline
 
 
 class PipelineOperator:
@@ -6,7 +6,7 @@ class PipelineOperator:
     pipelines = {
         # "test": GetHtmlPipeline,
         # "summarize": SummarizeProductDescriptionPipeline,
-        "get_html": GetHtmlPipeline,
+        "get_html": TestPipeline,
     }
 
     @staticmethod

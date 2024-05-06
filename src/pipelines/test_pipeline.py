@@ -1,11 +1,13 @@
 from nodes.browser_node import BrowserNode
+from nodes.markdown_node import MarkdownNode
 from pipelines.base_pipeline import BasePipeline
 
 
-class GetHtmlPipeline(BasePipeline):
+class TestPipeline(BasePipeline):
     def __init__(self, project_name):
         super().__init__(project_name)
         self.browser_node = BrowserNode(project_name)
+        self.markdown_node = MarkdownNode(project_name)
 
     def add_arguments(self, parser):
         parser.add_argument("--input_data_dir", type=str, help="CSV file with URLs to fetch HTML from")
@@ -18,4 +20,5 @@ class GetHtmlPipeline(BasePipeline):
             html_dir = self.browser_node.get_path(input_data=[args.url], execute_js=True, node_name="get_html")
         else:
             raise ValueError("Either --input_data_dir or --url must be provided.")
-        return html_dir
+
+        markdown_dir = self.markdown_node.get_path(input_path=html_dir, node_name="get_markdown")
