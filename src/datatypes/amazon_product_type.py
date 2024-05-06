@@ -1,15 +1,23 @@
 import json
+from typing import List, Union
 
 from datatypes.base_type import BaseType
 
 
-class Page(BaseType):
+class AmazonProduct(BaseType):
+    asin: str = ""
     url: str = ""
-    html: str = ""
-    markdown: str = ""
+    title: str = ""
+    image_urls: List[str] = []
+    description: str = ""
+    bullets: List[str] = []
 
-    def __init__(self, url: str):
-        self.url = url
+    def __init__(self, identifier: Union[str, None] = None):
+        if identifier:
+            if identifier.startswith("http"):
+                self.url = identifier
+            else:
+                self.asin = identifier
 
     def _save_all(self, file_path: str) -> None:
         data = self.__dict__
@@ -21,7 +29,7 @@ class Page(BaseType):
             file.write(content)
 
     @classmethod
-    def load(cls, file_path: str) -> "Page":
+    def load(cls, file_path: str) -> "AmazonProduct":
         with open(file_path, "r") as file:
             data = json.load(file)
             return cls(**data)

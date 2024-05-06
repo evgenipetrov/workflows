@@ -1,3 +1,4 @@
+from nodes.amazon_product_parser_node import AmazonProductParserNode
 from nodes.browser_node import BrowserNode
 from nodes.markdown_node import MarkdownNode
 from pipelines.base_pipeline import BasePipeline
@@ -8,6 +9,7 @@ class TestPipeline(BasePipeline):
         super().__init__(project_name)
         self.browser_node = BrowserNode(project_name)
         self.markdown_node = MarkdownNode(project_name)
+        self.amazon_product_parser_node = AmazonProductParserNode(project_name)
 
     def add_arguments(self, parser):
         parser.add_argument("--input_data_dir", type=str, help="CSV file with URLs to fetch HTML from")
@@ -22,3 +24,4 @@ class TestPipeline(BasePipeline):
             raise ValueError("Either --input_data_dir or --url must be provided.")
 
         markdown_dir = self.markdown_node.get_path(input_path=html_dir, node_name="get_markdown")
+        amazon_dir = self.amazon_product_parser_node.get_path(input_path=html_dir, node_name="parse_amazon")
