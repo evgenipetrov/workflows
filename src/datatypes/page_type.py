@@ -6,10 +6,12 @@ from datatypes.base_type import BaseType
 
 
 class Page(BaseType):
-    def __init__(self, url: str, html: str = "", markdown: str = ""):
+    url: str = ""
+    html: str = ""
+    markdown: str = ""
+
+    def __init__(self, url: str):
         self.url = url
-        self.html = html
-        self.markdown = markdown
 
     def _save_all(self, file_path: str) -> None:
         data = self.__dict__

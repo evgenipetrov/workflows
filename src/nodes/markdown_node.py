@@ -41,7 +41,14 @@ class MarkdownNode(BaseNode):
             if os.path.exists(all_json_file):
                 with open(all_json_file, "r") as file:
                     data = json.load(file)
-                    self._input_data = [Page(item["url"], item["html"], item["markdown"]) for item in data]
+                    self._input_data = []
+                    for item in data:
+                        url = item.get("url", "")
+                        page = Page(url)
+                        for key, value in item.items():
+                            if key != "url":
+                                setattr(page, key, value)
+                        self._input_data.append(page)
             else:
                 self._logger.warning("all.json file not found in the input path.")
         elif self._input_data:
