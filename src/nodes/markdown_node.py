@@ -35,26 +35,6 @@ class MarkdownNode(BaseNode):
             self._logger.error(f"Failed to convert HTML to Markdown for URL: {item.url}. Error: {e}")
         return item
 
-    def _load_data(self) -> None:
-        if self._input_path:
-            all_json_file = os.path.join(self._input_path, "all.json")
-            if os.path.exists(all_json_file):
-                with open(all_json_file, "r") as file:
-                    data = json.load(file)
-                    self._input_data = []
-                    for item in data:
-                        url = item.get("url", "")
-                        page = Page(url)
-                        for key, value in item.items():
-                            if key != "url":
-                                setattr(page, key, value)
-                        self._input_data.append(page)
-            else:
-                self._logger.warning("all.json file not found in the input path.")
-        elif self._input_data:
-            self._input_data = [page for page in self._input_data if isinstance(page, Page)]
-
-    # In MarkdownNode._save_data method
     def _save_data(self) -> None:
         json_file_path = os.path.join(self._output_path, "all.json")
         data = []
@@ -85,3 +65,6 @@ class MarkdownNode(BaseNode):
 
     def _get_cache_duration(self) -> timedelta:
         return self.CACHE_DURATION
+
+    def _get_input_type(self) -> Any:
+        return Page
