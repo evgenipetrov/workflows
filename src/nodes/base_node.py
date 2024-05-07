@@ -1,4 +1,5 @@
 import hashlib
+import importlib
 import json
 import logging
 import os
@@ -20,7 +21,7 @@ class BaseNode(ABC):
         self._output_path: str = ""
         self._kwargs: dict = {}
 
-    def _load_data(self, data_class: Type[T]) -> None:
+    def _load_data(self) -> None:
         if self._input_path:
             all_json_file = os.path.join(self._input_path, "all.json")
             if os.path.exists(all_json_file):
@@ -28,16 +29,20 @@ class BaseNode(ABC):
                     data = json.load(file)
                     self._input_data = []
                     for item in data:
-                        input_value = item.get(next(iter(item)), "")
-                        obj = data_class(input_value)
-                        for key, value in item.items():
-                            if key != next(iter(item)):
-                                setattr(obj, key, value)
-                        self._input_data.append(obj)
+                        data_type = item.get("data_type", "")
+                        try:
+                            module_name = f"datatypes.{data_type.lower()}_type"
+                            class_name = data_type
+                            module = importlib.import_module(module_name)
+                            obj_class = getattr(module, class_name)
+                            obj = obj_class.load(item)
+                            self._input_data.append(obj)
+                        except (ImportError, AttributeError) as e:
+                            self._logger.warning(f"Failed to load object of type {data_type}. Error: {e}")
             else:
                 self._logger.warning("all.json file not found in the input path.")
         elif self._input_data:
-            self._input_data = [data_class(input_value) for input_value in self._input_data]
+            self._input_data = [self._load_data_item(item) for item in self._input_data]
 
     @abstractmethod
     def _process_item(self, item: Any) -> Any:
@@ -90,7 +95,7 @@ class BaseNode(ABC):
     ) -> None:
         if input_path is not None:
             self._input_path = input_path
-            self._load_data(self._get_input_type())
+            self._load_data()
         elif input_data is not None:
             self._input_data = input_data
         else:

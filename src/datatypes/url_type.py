@@ -1,23 +1,13 @@
 import json
-from typing import List, Union
 
 from datatypes.base_type import BaseType
 
 
-class AmazonProduct(BaseType):
-    asin: str = ""
+class Url(BaseType):
     address: str = ""
-    title: str = ""
-    image_urls: List[str] = []
-    description: str = ""
-    bullets: List[str] = []
 
-    def __init__(self, identifier: Union[str, None] = None):
-        if identifier:
-            if identifier.startswith("http"):
-                self.url = identifier
-            else:
-                self.asin = identifier
+    def __init__(self, address: str = ""):
+        self.address = address
 
     def _save_all(self, file_path: str) -> None:
         data = self.__dict__
@@ -29,7 +19,7 @@ class AmazonProduct(BaseType):
             file.write(content)
 
     @classmethod
-    def load(cls, data: dict) -> "AmazonProduct":
+    def load(cls, data: dict) -> "Url":
         instance = cls()
         for key, value in data.items():
             if hasattr(instance, key):

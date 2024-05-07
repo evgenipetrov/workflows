@@ -1,23 +1,17 @@
 import json
-from typing import List, Union
 
 from datatypes.base_type import BaseType
 
 
-class AmazonProduct(BaseType):
-    asin: str = ""
-    address: str = ""
-    title: str = ""
-    image_urls: List[str] = []
-    description: str = ""
-    bullets: List[str] = []
+class OpenAIChat(BaseType):
+    system_prompt: str = ""
+    user_prompt: str = ""
+    response: str = ""
 
-    def __init__(self, identifier: Union[str, None] = None):
-        if identifier:
-            if identifier.startswith("http"):
-                self.url = identifier
-            else:
-                self.asin = identifier
+    def __init__(self, system_prompt: str = "", user_prompt: str = "", response: str = ""):
+        self.system_prompt = system_prompt
+        self.user_prompt = user_prompt
+        self.response = response
 
     def _save_all(self, file_path: str) -> None:
         data = self.__dict__
@@ -29,7 +23,7 @@ class AmazonProduct(BaseType):
             file.write(content)
 
     @classmethod
-    def load(cls, data: dict) -> "AmazonProduct":
+    def load(cls, data: dict) -> "OpenAIChat":
         instance = cls()
         for key, value in data.items():
             if hasattr(instance, key):

@@ -7,6 +7,7 @@ from typing import Any
 from bs4 import BeautifulSoup
 
 from datatypes.amazon_product_type import AmazonProduct
+from datatypes.page_type import Page
 from nodes.base_node import BaseNode
 
 
@@ -22,37 +23,33 @@ class AmazonProductParserNode(BaseNode):
 
     def _process_item(self, item: Any) -> AmazonProduct:
         try:
-            if isinstance(item, AmazonProduct):
+            if isinstance(item, Page):
                 html_content = item.html
             else:
                 raise ValueError("Invalid input type. Expected AmazonProduct object.")
 
             soup = BeautifulSoup(html_content, "html.parser")
-            item.asin = self._extract_asin(item.url)
+            item.asin = self._extract_asin(item.address)
             item.title = self._extract_title(soup)
             item.image_urls = self._extract_image_urls(soup)
             item.description = self._extract_description(soup)
             item.bullets = self._extract_bullets(soup)
             self._logger.info(f"Successfully parsed Amazon product data for ASIN: {item.asin}")
         except Exception as e:
-            self._logger.error(f"Failed to parse Amazon product data for URL: {item.url}. Error: {e}")
+            self._logger.error(f"Failed to parse Amazon product data for URL: {item.address}. Error: {e}")
         return item
 
     def _save_data(self) -> None:
         json_file_path = os.path.join(self._output_path, "all.json")
         data = []
         for index, item in enumerate(self._output_data):
-            file_name = f"payload_{index}.json"
-            file_path = os.path.join(self._output_path, file_name)
-            item._save_payload(file_path, json.dumps(item.__dict__, indent=4))
             entry = {
                 "asin": item.asin,
-                "url": item.url,
+                "address": item.address,
                 "title": item.title,
                 "image_urls": item.image_urls,
                 "description": item.description,
                 "bullets": item.bullets,
-                "file_name": file_name,
             }
             data.append(entry)
         with open(json_file_path, "w") as json_file:
