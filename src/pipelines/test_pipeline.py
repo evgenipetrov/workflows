@@ -70,6 +70,23 @@ class TestPipeline(BasePipeline):
                     "presence_penalty": 0.0,
                 },
             )
+
+            system_prompt = "You are a PPC specialist."
+            user_prompt = "Look at this product and extract the 10 most relevant keywords for PPC campaigns. Your output must be lowercase, each keyword on a new line. No numbers or special characters."
+            openai_keywords_dir = self.openai_node.get_path(
+                input_path=markdown_dir,
+                node_name="openai_ppc_keywords",
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                openai_parameters={
+                    "model": "gpt-3.5-turbo",
+                    "temperature": 0.5,
+                    "max_tokens": 2000,
+                    "top_p": 1.0,
+                    "frequency_penalty": 0.0,
+                    "presence_penalty": 0.0,
+                },
+            )
         except Exception as e:
             logging.error(f"An error occurred during pipeline execution: {str(e)}")
             raise
